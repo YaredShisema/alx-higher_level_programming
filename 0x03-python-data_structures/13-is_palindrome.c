@@ -1,70 +1,35 @@
-#include "lists.h"
+#include <stddef.h>
 #include <stdio.h>
-
-int is_palindrome(listint_t **head)
-{
-  listint_t *nhead, *tort, *hare, *ptort;
-  listint_t *cut = NULL, *half, *it1, *it2;
-
-  if (!head || !*head)
-    return (1);
-
-  nhead = *head;
-  if (nhead->next != NULL)
-    {
-      for (hare = nhead, tort = nhead; hare != NULL && hare->next != NULL;
-	   ptort = tort, tort = tort->next)
-	hare = hare->next->next;
-      if (hare != NULL)
-	{
-	  cut = tort;
-	  tort = tort->next;
-	}
-      ptort->next = NULL;
-      half = tort;
-      it1 = reverse_listint(&half);
-      for (it2 = *head; it2; it1 = it1->next, it2 = it2->next)
-	{
-	  if (it2->n != it1->n)
-	    return (0);
-	}
-      if (cut == NULL)
-	ptort->next = half;
-      else
-	{
-	  ptort->next = cut;
-	  cut->next = half;
-	}
-    }
-
-  return (1);
-}
+#include "lists.h"
 
 /**
- * reverse_listint - Reverses a linked list in pladce
- * @head: Pointer to a pointer pointing to the first item in the list
+ * is_palindrome - check if a linked list is a palindrome
  *
- * Return: The new head of the reversed list
+ * @head: first node
+ *
+ * Return: 1 if success
+ *         0 if failed
  */
-listint_t *reverse_listint(listint_t **head)
+int is_palindrome(listint_t **head)
 {
-  listint_t *next = NULL, *prev = NULL;
+	listint_t *tmp = *head;
+	int values[2048], i = 0, cLoop, limit;
 
-  if (!head || !*head)
-    return (NULL);
+	if (head == NULL || *head == NULL)
+		return (1);
 
-  while ((*head)->next)
-    {
-      next = (*head)->next;
+	while (tmp != NULL)
+	{
+		values[i] = tmp->n;
+		i++;
+		tmp = tmp->next;
+	}
 
-      (*head)->next = prev;
+	limit = (i % 2 == 0) ? i / 2 : (i + 1) / 2;
 
-      prev = *head;
+	for (cLoop = 0; cLoop < limit; cLoop++)
+		if (values[cLoop] != values[i - 1 - cLoop])
+			return (0);
 
-      *head = next;
-    }
-
-  (*head)->next = prev;
-
-  return (*head);
+	return (1);
 }
